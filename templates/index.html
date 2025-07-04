@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DR Log Analysis - Upload</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container {
+            padding-top: 3rem;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.95);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px 20px 0 0 !important;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .card-header h2 {
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .card-body {
+            padding: 2.5rem;
+        }
+        
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 3rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: rgba(118, 75, 162, 0.1);
+        }
+        
+        .upload-area.dragover {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.1);
+        }
+        
+        .upload-icon {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 0.8rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .section-divider {
+            margin: 2rem 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .section-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #dee2e6;
+        }
+        
+        .section-divider span {
+            background: white;
+            padding: 0 1rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+        
+        .loading {
+            display: none;
+        }
+        
+        .spinner-border {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+        
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .progress-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-chart-line me-3"></i>DR Log Analysis Dashboard</h2>
+                        <p class="mb-0 mt-2">Upload or select a disaster recovery log file for analysis</p>
+                    </div>
+                    <div class="card-body">
+                        <form id="uploadForm">
+                            <!-- File Upload Section -->
+                            <div class="mb-4">
+                                <h5 class="mb-3"><i class="fas fa-cloud-upload-alt me-2"></i>Upload Log File</h5>
+                                <div class="upload-area" id="uploadArea">
+                                    <i class="fas fa-file-upload upload-icon"></i>
+                                    <h6>Drag and drop your log file here</h6>
+                                    <p class="text-muted mb-3">or click to browse</p>
+                                    <input type="file" id="fileInput" name="file" accept=".log" style="display: none;">
+                                    <button type="button" class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                                        Choose File
+                                    </button>
+                                </div>
+                                <div id="fileInfo" class="mt-3" style="display: none;">
+                                    <div class="alert alert-success">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        <span id="fileName"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="section-divider">
+                                <span>OR</span>
+                            </div>
+                            
+                            <!-- Select from Logs Folder -->
+                            <div class="mb-4">
+                                <h5 class="mb-3"><i class="fas fa-folder-open me-2"></i>Select from Logs Folder</h5>
+                                <select class="form-select" id="logSelect" name="selected_log">
+                                    <option value="">Select a log file...</option>
+                                    {% for log_file in log_files %}
+                                        <option value="{{ log_file }}">{{ log_file }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            <div class="section-divider">
+                                <span>Configuration</span>
+                            </div>
+                            
+                            <!-- RTO and RPO Configuration -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="rto" class="form-label">
+                                        <i class="fas fa-clock me-2"></i>Recovery Time Objective (RTO) - Minutes
+                                    </label>
+                                    <input type="number" class="form-control" id="rto" name="rto" placeholder="Enter RTO in minutes" min="0">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="rpo" class="form-label">
+                                        <i class="fas fa-database me-2"></i>Recovery Point Objective (RPO) - Minutes
+                                    </label>
+                                    <input type="number" class="form-control" id="rpo" name="rpo" placeholder="Enter RPO in minutes" min="0">
+                                </div>
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                    <span id="submitText">
+                                        <i class="fas fa-chart-bar me-2"></i>Analyze Log File
+                                    </span>
+                                    <span id="loadingSpinner" class="loading">
+                                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                        Processing...
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <!-- Error Alert -->
+                        <div id="errorAlert" class="alert alert-danger mt-3" style="display: none;">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span id="errorMessage"></span>
+                        </div>
+                        
+                        <!-- Progress Bar -->
+                        <div id="progressContainer" class="mt-3" style="display: none;">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // File upload functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const uploadForm = document.getElementById('uploadForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const submitText = document.getElementById('submitText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const errorAlert = document.getElementById('errorAlert');
+        const errorMessage = document.getElementById('errorMessage');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.querySelector('.progress-bar');
+        
+        let uploadedFile = null;
+        
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+        
+        uploadArea.addEventListener('click', (e) => {
+            if (e.target !== fileInput) {
+                fileInput.click();
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+        
+        function handleFileSelect(file) {
+            if (file.type !== 'text/plain' && !file.name.endsWith('.log')) {
+                showError('Please select a valid log file (.log extension)');
+                return;
+            }
+            
+            uploadedFile = file;
+            fileName.textContent = file.name;
+            fileInfo.style.display = 'block';
+            
+            // Clear log selection
+            document.getElementById('logSelect').value = '';
+            hideError();
+        }
+        
+        // Form submission
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const rto = document.getElementById('rto').value;
+            const rpo = document.getElementById('rpo').value;
+            const selectedLog = document.getElementById('logSelect').value;
+            
+            if (!uploadedFile && !selectedLog) {
+                showError('Please select a log file or upload one');
+                return;
+            }
+            
+            if (!rto || !rpo) {
+                showError('Please enter both RTO and RPO values');
+                return;
+            }
+            
+            setLoading(true);
+            hideError();
+            
+            try {
+                // Upload file if necessary
+                if (uploadedFile) {
+                    await uploadFile(uploadedFile);
+                }
+                
+                // Process the log
+                await processLog(rto, rpo, selectedLog, !!uploadedFile);
+                
+            } catch (error) {
+                showError(error.message);
+                setLoading(false);
+            }
+        });
+        
+        async function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(result.error || 'Upload failed');
+            }
+            
+            return result;
+        }
+        
+        async function processLog(rto, rpo, selectedLog, useUploaded) {
+            showProgress();
+            // Convert RTO and RPO from minutes to seconds before sending to backend
+            const rtoSeconds = parseInt(rto) * 60;
+            const rpoSeconds = parseInt(rpo) * 60;
+            const response = await fetch('/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    rto: rtoSeconds,
+                    rpo: rpoSeconds,
+                    selected_log: selectedLog,
+                    use_uploaded: useUploaded
+                })
+            });
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result.error || 'Processing failed');
+            }
+            // Simulate progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                updateProgress(progress);
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        window.location.href = result.redirect_url;
+                    }, 500);
+                }
+            }, 100);
+        }
+        
+        function setLoading(loading) {
+            if (loading) {
+                submitBtn.disabled = true;
+                submitText.style.display = 'none';
+                loadingSpinner.style.display = 'inline-block';
+            } else {
+                submitBtn.disabled = false;
+                submitText.style.display = 'inline-block';
+                loadingSpinner.style.display = 'none';
+                hideProgress();
+            }
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorAlert.style.display = 'block';
+        }
+        
+        function hideError() {
+            errorAlert.style.display = 'none';
+        }
+        
+        function showProgress() {
+            progressContainer.style.display = 'block';
+            updateProgress(0);
+        }
+        
+        function hideProgress() {
+            progressContainer.style.display = 'none';
+        }
+        
+        function updateProgress(percent) {
+            progressBar.style.width = percent + '%';
+        }
+    </script>
+</body>
+</html>

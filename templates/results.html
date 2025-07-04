@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DR Visualization for {{ log_name }}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container-fluid {
+            padding-top: 2rem;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.95);
+            margin-bottom: 2rem;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.5rem;
+        }
+        
+        .card-body {
+            padding: 2rem;
+        }
+        
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        
+        .header-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            text-align: center;
+        }
+        
+        .metric-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-failure {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .chart-container {
+            height: 400px;
+            margin: 1rem 0;
+        }
+        
+        .step-item {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            background: white;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .step-item:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+        
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .step-meta {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            border: none;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+        }
+        
+        .icon-lg {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .success-icon {
+            color: #28a745;
+        }
+        
+        .failure-icon {
+            color: #dc3545;
+        }
+        
+        .info-icon {
+            color: #17a2b8;
+        }
+        
+        .warning-icon {
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="header-title">
+                            <i class="fas fa-chart-line me-3"></i>DR Visualization for {{ log_name }}
+                        </h1>
+                        <p class="header-subtitle">Disaster Recovery Analysis Dashboard</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Metrics Row -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="metric-card">
+                    <i class="fas fa-clock icon-lg info-icon"></i>
+                    <div class="metric-value">{{ parsed_data.dr_total_time }}</div>
+                    <div class="metric-label">Total Time (seconds)</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="metric-card">
+                    <i class="fas fa-user-clock icon-lg warning-icon"></i>
+                    <div class="metric-value">{{ parsed_data.user_response_time }}</div>
+                    <div class="metric-label">User Response Time</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="metric-card">
+                    <i class="fas fa-target icon-lg {% if rto_met %}success-icon{% else %}failure-icon{% endif %}"></i>
+                    <div class="metric-value">{{ rto }}</div>
+                    <div class="metric-label">RTO</div>
+                    <div class="status-badge {% if rto_met %}status-success{% else %}status-failure{% endif %}">
+                        {% if rto_met %}✓ Met{% else %}✗ Not Met{% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="metric-card">
+                    <i class="fas fa-database icon-lg {% if rpo_met %}success-icon{% else %}failure-icon{% endif %}"></i>
+                    <div class="metric-value">{{ rpo }}</div>
+                    <div class="metric-label">RPO</div>
+                    <div class="status-badge {% if rpo_met %}status-success{% else %}status-failure{% endif %}">
+                        {% if rpo_met %}✓ Met{% else %}✗ Not Met{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts Row -->
+        <div class="row mb-4">
+            <div class="col-lg-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-bar me-2"></i>Step Duration Analysis</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="barChart" class="chart-container"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-pie me-2"></i>Time Distribution</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="pieChart" class="chart-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-line me-2"></i>Step Performance Timeline</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="lineChart" class="chart-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Steps Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5><i class="fas fa-list-ol me-2"></i>Detailed Step Analysis</h5>
+                        <a href="/" class="back-btn">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Upload
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        {% for step in parsed_data.steps_data.steps %}
+                        <div class="step-item d-flex align-items-center" onclick="viewStepDetail({{ loop.index }})">
+                            <div class="step-number">{{ loop.index }}</div>
+                            <div class="step-content">
+                                <div class="step-title">{{ step }}</div>
+                                <div class="step-meta">
+                                    <i class="fas fa-clock me-2"></i>
+                                    {% if loop.index0 < parsed_data.steps_data.time_taken|length %}
+                                        Duration: {{ parsed_data.steps_data.time_taken[loop.index0] }} seconds
+                                    {% else %}
+                                        Duration: Not available
+                                    {% endif %}
+                                    
+                                    {% if loop.index0 < parsed_data.steps_data.approved_by|length %}
+                                        <i class="fas fa-user-check ms-3 me-2"></i>
+                                        Approved by: {{ parsed_data.steps_data.approved_by[loop.index0] }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="ms-auto">
+                                <i class="fas fa-chevron-right text-muted"></i>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Chart data from Flask
+        const stepData = {{ parsed_data.steps_data|tojson }};
+        const stepDetails = {{ parsed_data.step_details|tojson }};
+        
+        // Initialize Bar Chart
+        const barChart = echarts.init(document.getElementById('barChart'));
+        const barOption = {
+            title: {
+                text: 'Step Duration (seconds)',
+                left: 'center',
+                textStyle: {
+                    color: '#333',
+                    fontSize: 16
+                }
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: stepData.steps.map((step, index) => `Step ${index + 1}`),
+                axisLabel: {
+                    rotate: 45
+                }
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Time (seconds)'
+            },
+            series: [{
+                name: 'Duration',
+                type: 'bar',
+                data: stepData.time_taken,
+                itemStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        {offset: 0, color: '#667eea'},
+                        {offset: 1, color: '#764ba2'}
+                    ])
+                }
+            }]
+        };
+        barChart.setOption(barOption);
+        
+        // Initialize Pie Chart
+        const pieChart = echarts.init(document.getElementById('pieChart'));
+        const pieData = stepData.time_taken.map((time, index) => ({
+            name: `Step ${index + 1}`,
+            value: time
+        }));
+        
+        const pieOption = {
+            title: {
+                text: 'Time Distribution by Step',
+                left: 'center',
+                textStyle: {
+                    color: '#333',
+                    fontSize: 16
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b}: {c} seconds ({d}%)'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: pieData.map(item => item.name)
+            },
+            series: [{
+                name: 'Step Duration',
+                type: 'pie',
+                radius: ['40%', '70%'],
+                avoidLabelOverlap: false,
+                label: {
+                    show: false,
+                    position: 'center'
+                },
+                emphasis: {
+                    label: {
+                        show: true,
+                        fontSize: '18',
+                        fontWeight: 'bold'
+                    }
+                },
+                labelLine: {
+                    show: false
+                },
+                data: pieData,
+                itemStyle: {
+                    color: function(params) {
+                        const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#43e97b'];
+                        return colors[params.dataIndex % colors.length];
+                    }
+                }
+            }]
+        };
+        pieChart.setOption(pieOption);
+        
+        // Initialize Line Chart
+        const lineChart = echarts.init(document.getElementById('lineChart'));
+        const lineOption = {
+            title: {
+                text: 'Performance Timeline',
+                left: 'center',
+                textStyle: {
+                    color: '#333',
+                    fontSize: 16
+                }
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['Duration', 'Cumulative Time'],
+                top: 30
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: stepData.steps.map((step, index) => `Step ${index + 1}`),
+                axisLabel: {
+                    rotate: 45
+                }
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Time (seconds)'
+            },
+            series: [
+                {
+                    name: 'Duration',
+                    type: 'line',
+                    data: stepData.time_taken,
+                    lineStyle: {
+                        color: '#667eea'
+                    },
+                    itemStyle: {
+                        color: '#667eea'
+                    }
+                },
+                {
+                    name: 'Cumulative Time',
+                    type: 'line',
+                    data: stepData.time_taken.reduce((acc, time, index) => {
+                        acc.push(index === 0 ? time : acc[index - 1] + time);
+                        return acc;
+                    }, []),
+                    lineStyle: {
+                        color: '#764ba2'
+                    },
+                    itemStyle: {
+                        color: '#764ba2'
+                    }
+                }
+            ]
+        };
+        lineChart.setOption(lineOption);
+        
+        // Make charts responsive
+        window.addEventListener('resize', function() {
+            barChart.resize();
+            pieChart.resize();
+            lineChart.resize();
+        });
+        
+        // Navigate to step detail
+        function viewStepDetail(stepNumber) {
+            window.location.href = `/step/${stepNumber}`;
+        }
+    </script>
+</body>
+</html>

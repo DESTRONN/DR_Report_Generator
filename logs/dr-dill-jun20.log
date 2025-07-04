@@ -1,0 +1,344 @@
+root@gce-dr-bastion-host-iiflsamasta:~/dr-drill-jun20# cat dr-plan-20250620-1532.log
+2025-06-20 15:32:48 - ⚠️  This script will perform major changes. Make sure downtime is approved.
+2025-06-20 15:32:50 - === Disaster Recovery Execution Started at: 2025-06-20 15:32:50 ===
+2025-06-20 15:32:50 - ==========================================
+2025-06-20 15:32:52 - ⏳ User took 2 seconds to respond to Step 1
+2025-06-20 15:32:52 - ✅ Step 1 approved by user
+2025-06-20 15:32:52 - STEP 1: Inform Stakeholders (Manual Step) and update firewalls
+2025-06-20 15:32:55 - ✅ Stakeholders informed manually.
+2025-06-20 15:32:55 - 🔹 Starting: Disabling the DR firewall for temporal cloud
+2025-06-20 15:33:03 - ✅ SUCCESS: Disabling the DR firewall for temporal cloud (Start: 2025-06-20 15:32:55, End: 2025-06-20 15:33:03)
+2025-06-20 15:33:03 - 🔹 Starting: Enabling the prod firewall for temporal cloud
+2025-06-20 15:33:11 - ✅ SUCCESS: Enabling the prod firewall for temporal cloud (Start: 2025-06-20 15:33:03, End: 2025-06-20 15:33:11)
+2025-06-20 15:33:11 - 🔹 Starting: Disabling the deny access to dr-bastion-host-to-prod cluster access
+2025-06-20 15:33:14 - ✅ SUCCESS: Disabling the deny access to dr-bastion-host-to-prod cluster access (Start: 2025-06-20 15:33:11, End: 2025-06-20 15:33:14)
+2025-06-20 15:33:14 - ⏱️ STEP 1 Completed in 22 seconds
+2025-06-20 15:33:14 - ==========================================
+2025-06-20 15:33:14 - ==========================================
+2025-06-20 15:36:01 - ⏳ User took 167 seconds to respond to Step 2
+2025-06-20 15:36:01 - ✅ Step 2 approved by user
+2025-06-20 15:36:01 - STEP 2: Scaling down GKE Clusters in PROD
+2025-06-20 15:36:01 - 🔹 Starting: Connecting to gke-kong-prod-iiflsmasta-los
+2025-06-20 15:36:02 - ✅ SUCCESS: Connecting to gke-kong-prod-iiflsmasta-los (Start: 2025-06-20 15:36:01, End: 2025-06-20 15:36:02)
+2025-06-20 15:36:02 - 🔹 Starting: Scaling down deployments in kong
+2025-06-20 15:36:03 - ✅ SUCCESS: Scaling down deployments in kong (Start: 2025-06-20 15:36:02, End: 2025-06-20 15:36:03)
+2025-06-20 15:36:03 - 🔹 Starting: Scaling down statefulsets in kong
+2025-06-20 15:36:04 - ERROR - ❌ FAILURE: Scaling down statefulsets in kong (Start: 2025-06-20 15:36:03, End: 2025-06-20 15:36:04)
+2025-06-20 15:36:04 - 🔹 Starting: Connecting to gke-temporal-prod-iiflsmasta-los
+2025-06-20 15:36:05 - ✅ SUCCESS: Connecting to gke-temporal-prod-iiflsmasta-los (Start: 2025-06-20 15:36:04, End: 2025-06-20 15:36:05)
+2025-06-20 15:36:05 - 🔹 Starting: Scaling down deployments in temporal
+2025-06-20 15:36:07 - ✅ SUCCESS: Scaling down deployments in temporal (Start: 2025-06-20 15:36:05, End: 2025-06-20 15:36:07)
+2025-06-20 15:36:07 - 🔹 Starting: Scaling down statefulsets in temporal
+2025-06-20 15:36:07 - ✅ SUCCESS: Scaling down statefulsets in temporal (Start: 2025-06-20 15:36:07, End: 2025-06-20 15:36:07)
+2025-06-20 15:36:07 - 🔹 Starting: Connecting to gke-prod-iiflsmasta-los
+2025-06-20 15:36:08 - ✅ SUCCESS: Connecting to gke-prod-iiflsmasta-los (Start: 2025-06-20 15:36:07, End: 2025-06-20 15:36:08)
+2025-06-20 15:36:08 - 🔹 Starting: Scaling down deployments in samasta-prod
+2025-06-20 15:36:10 - ✅ SUCCESS: Scaling down deployments in samasta-prod (Start: 2025-06-20 15:36:08, End: 2025-06-20 15:36:10)
+2025-06-20 15:36:10 - 🔹 Starting: Scaling down statefulsets in samasta-prod
+2025-06-20 15:36:10 - ERROR - ❌ FAILURE: Scaling down statefulsets in samasta-prod (Start: 2025-06-20 15:36:10, End: 2025-06-20 15:36:10)
+2025-06-20 15:36:10 - ⏱️ STEP 2 Completed in 9 seconds
+2025-06-20 15:36:10 - ==========================================
+2025-06-20 15:36:10 - ==========================================
+2025-06-20 15:37:46 - ⏳ User took 96 seconds to respond to Step 2.5
+2025-06-20 15:37:46 - ✅ Step 2.5 approved by user
+2025-06-20 15:37:46 - STEP 2.5: Monitoring GKE Clusters in prod
+2025-06-20 15:37:46 - 🔹 Starting: Connecting to gke-kong-prod-iiflsmasta-los
+2025-06-20 15:37:47 - ✅ SUCCESS: Connecting to gke-kong-prod-iiflsmasta-los (Start: 2025-06-20 15:37:46, End: 2025-06-20 15:37:47)
+2025-06-20 15:37:47 - 🔄 Waiting for all pods to terminate in gke-kong-prod-iiflsmasta-los (kong)...
+2025-06-20 15:37:48 - ✅ All pods successfully terminated in gke-kong-prod-iiflsmasta-los (kong).
+2025-06-20 15:37:48 - 🔹 Starting: Connecting to gke-temporal-prod-iiflsmasta-los
+2025-06-20 15:37:49 - ✅ SUCCESS: Connecting to gke-temporal-prod-iiflsmasta-los (Start: 2025-06-20 15:37:48, End: 2025-06-20 15:37:49)
+2025-06-20 15:37:49 - 🔄 Waiting for all pods to terminate in gke-temporal-prod-iiflsmasta-los (temporal)...
+2025-06-20 15:37:50 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:38:01 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:38:12 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:38:22 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:38:33 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:38:43 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:38:53 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:39:04 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:39:14 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:39:25 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:39:35 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:39:46 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:39:56 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:40:07 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:40:17 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:40:28 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:40:38 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:40:48 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:40:59 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:41:09 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:41:20 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-5dj4g   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:41:30 - ⏳ 3 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:41:41 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-f799z   1/1   Running   0     10s
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:41:51 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-f799z   1/1   Running   0     21s
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:42:02 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-f799z   1/1   Running   0     31s
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:42:12 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-f799z   1/1   Running   0     42s
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:42:23 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-f799z   1/1   Running   0     52s
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:42:33 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-f799z   1/1   Running   0     63s
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:42:44 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-f799z   1/1   Running   0     73s
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:42:54 - ⏳ 4 pod(s) still running in gke-temporal-prod-iiflsmasta-los (temporal). Waiting...
+temporaltest-prometheus-node-exporter-6xw5n   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-f799z   1/1   Running   0     84s
+temporaltest-prometheus-node-exporter-n75wm   1/1   Running   0     5d11h
+temporaltest-prometheus-node-exporter-zhjsv   1/1   Running   0     5d11h
+2025-06-20 15:43:04 - ERROR - ❌ Timeout reached while waiting for pods in gke-temporal-prod-iiflsmasta-los (temporal) to terminate.
+2025-06-20 15:43:04 - 🔹 Starting: Connecting to gke-prod-iiflsmasta-los
+2025-06-20 15:43:05 - ✅ SUCCESS: Connecting to gke-prod-iiflsmasta-los (Start: 2025-06-20 15:43:04, End: 2025-06-20 15:43:05)
+2025-06-20 15:43:05 - 🔄 Waiting for all pods to terminate in gke-prod-iiflsmasta-los (samasta-prod)...
+2025-06-20 15:43:06 - ✅ All pods successfully terminated in gke-prod-iiflsmasta-los (samasta-prod).
+2025-06-20 15:43:06 - ⏱️ STEP 2.5 Completed in 320 seconds
+2025-06-20 15:43:06 - ==========================================
+2025-06-20 15:43:06 - ==========================================
+2025-06-20 15:43:43 - ⏳ User took 37 seconds to respond to Step 2.6
+2025-06-20 15:43:43 - ✅ Step 2.6 approved by user
+2025-06-20 15:43:43 - STEP 2.6: Wait until Cloud SQL Delhi Read Replica Lag is 0 seconds
+2025-06-20 15:43:43 - Checking Cloud SQL replica lag...
+2025-06-20 15:43:44 - Current replica lag: 4.838498 seconds
+2025-06-20 15:43:44 - ⏳ Lag is 4.838498. Waiting 10 seconds before rechecking...
+2025-06-20 15:43:54 - Checking Cloud SQL replica lag...
+2025-06-20 15:43:55 - Current replica lag: 4.838498 seconds
+2025-06-20 15:43:55 - ⏳ Lag is 4.838498. Waiting 10 seconds before rechecking...
+2025-06-20 15:44:05 - Checking Cloud SQL replica lag...
+2025-06-20 15:44:05 - Current replica lag:  seconds
+2025-06-20 15:44:05 - ⏳ Lag is . Waiting 10 seconds before rechecking...
+2025-06-20 15:44:15 - Checking Cloud SQL replica lag...
+2025-06-20 15:44:16 - Current replica lag:  seconds
+2025-06-20 15:44:16 - ⏳ Lag is . Waiting 10 seconds before rechecking...
+2025-06-20 15:44:26 - Checking Cloud SQL replica lag...
+2025-06-20 15:44:27 - Current replica lag: 0 seconds
+2025-06-20 15:44:27 - ✅ Replica lag is 0. Proceeding with promotion.
+2025-06-20 15:44:28 - ✅ Fetched PostgreSQL password from Secret Manager
+2025-06-20 15:44:28 - Checking for active write transactions on the instance...
+2025-06-20 15:44:28 - 🔹 Starting: Connecting to PostgreSQL and checking for active write queries
+2025-06-20 15:44:29 - ✅ SUCCESS: Connecting to PostgreSQL and checking for active write queries (Start: 2025-06-20 15:44:28, End: 2025-06-20 15:44:29)
+2025-06-20 15:44:29 - ⏳ Checking for active write operations on the master until none are found...
+2025-06-20 15:44:29 - ⚠️ 1 active write queries still running. Attempt 1/3.
+2025-06-20 15:44:39 - ⚠️ 1 active write queries still running. Attempt 2/3.
+2025-06-20 15:44:49 - ⚠️ 1 active write queries still running. Attempt 3/3.
+2025-06-20 15:44:49 - 🛑 Maximum retries reached. Terminating active write queries...
+2025-06-20 15:44:50 - ✅ Terminated active write queries. Proceeding to next step.
+2025-06-20 15:44:50 - ⏱️ STEP 2.6 Completed in 67 seconds
+2025-06-20 15:44:50 - ==========================================
+2025-06-20 15:44:50 - ==========================================
+2025-06-20 15:49:43 - ⏳ User took 293 seconds to respond to Step 3
+2025-06-20 15:49:43 - ✅ Step 3 approved by user
+2025-06-20 15:49:43 - STEP 3: Promote the Delhi Read Replica CloudSQL Database
+2025-06-20 15:49:43 - 🔹 Starting: Promote Delhi read replica to master
+2025-06-20 15:51:21 - ✅ SUCCESS: Promote Delhi read replica to master (Start: 2025-06-20 15:49:43, End: 2025-06-20 15:51:21)
+2025-06-20 15:51:21 - ⏱️ STEP 3 Completed in 98 seconds
+2025-06-20 15:51:21 - ==========================================
+2025-06-20 15:51:21 - ==========================================
+2025-06-20 15:51:37 - ⏳ User took 16 seconds to respond to Step 4
+2025-06-20 15:51:37 - ✅ Step 4 approved by user
+2025-06-20 15:51:37 - STEP 4: Enable HA, Machine type, Backup, Maintenance for Delhi Master DB
+2025-06-20 15:51:37 - 🔹 Starting: Patch Delhi Master SQL
+2025-06-20 16:01:35 - ERROR - ❌ FAILURE: Patch Delhi Master SQL (Start: 2025-06-20 15:51:37, End: 2025-06-20 16:01:35)
+2025-06-20 16:01:35 - ⏱️ STEP 4 Completed in 598 seconds
+2025-06-20 16:01:35 - ==========================================
+2025-06-20 16:01:35 - ==========================================
+2025-06-20 21:33:41 - ⏳ User took 126 seconds to respond to Step 5
+2025-06-20 21:33:41 - ✅ Step 5 approved by user
+2025-06-20 21:33:41 - STEP 5: Upgrade Kong in DR cluster and patch service account
+2025-06-20 21:38:33 - ✅ Updated pg_host in values-cp-dr.yaml to: 10.33.0.14
+2025-06-20 21:38:33 - 🔹 Starting: Connecting to gke-kong-dr-iiflsmasta-los
+2025-06-20 21:38:33 - ✅ SUCCESS: Connecting to gke-kong-dr-iiflsmasta-los (Start: 2025-06-20 21:38:33, End: 2025-06-20 21:38:33)
+2025-06-20 21:38:33 - 🔹 Starting: Adding Kong Helm repo
+2025-06-20 21:38:33 - ERROR - ❌ FAILURE: Adding Kong Helm repo (Start: 2025-06-20 21:38:33, End: 2025-06-20 21:38:33)
+2025-06-20 21:38:33 - 🔹 Starting: Updating Helm repos
+2025-06-20 21:38:34 - ERROR - ❌ FAILURE: Updating Helm repos (Start: 2025-06-20 21:38:33, End: 2025-06-20 21:38:34)
+2025-06-20 21:38:34 - 🔹 Starting: Upgrading Kong release
+2025-06-20 21:38:34 - ERROR - ❌ FAILURE: Upgrading Kong release (Start: 2025-06-20 21:38:34, End: 2025-06-20 21:38:34)
+2025-06-20 21:38:34 - 🔹 Starting: Patching service account in kong-cp-kong deployment
+2025-06-20 21:38:35 - ✅ SUCCESS: Patching service account in kong-cp-kong deployment (Start: 2025-06-20 21:38:34, End: 2025-06-20 21:38:35)
+2025-06-20 21:38:35 - ⏱️ STEP 5 Completed in 3 seconds
+2025-06-20 21:38:35 - ==========================================
+2025-06-20 21:38:35 - ==========================================
+2025-06-20 21:41:11 - ⏳ User took 156 seconds to respond to Step 6
+2025-06-20 21:41:11 - ✅ Step 6 approved by user
+2025-06-20 21:41:11 - STEP 6: Upgrade Temporal in DR cluster
+2025-06-20 21:41:11 - Connecting to DR cluster and updating configuration...
+2025-06-20 21:41:11 - 🔹 Starting: Connecting to DR cluster
+2025-06-20 21:41:12 - ✅ SUCCESS: Connecting to DR cluster (Start: 2025-06-20 21:41:11, End: 2025-06-20 21:41:12)
+2025-06-20 21:41:12 - ⚠️ temporaldr-config.yaml not found, skipping config update
+2025-06-20 21:41:12 - 🔹 Starting: Restarting deployments in temporal-dr namespace
+2025-06-20 21:41:13 - ✅ SUCCESS: Restarting deployments in temporal-dr namespace (Start: 2025-06-20 21:41:12, End: 2025-06-20 21:41:13)
+2025-06-20 21:41:13 - 🔹 Starting: Restarting statefulsets in temporal-dr namespace
+2025-06-20 21:41:13 - ✅ SUCCESS: Restarting statefulsets in temporal-dr namespace (Start: 2025-06-20 21:41:13, End: 2025-06-20 21:41:13)
+2025-06-20 21:41:13 - ✅ Main temporal upgrade operations completed
+2025-06-20 21:41:43 - Checking Temporal service status...
+2025-06-20 21:41:43 - ✅ Temporal services appear to be running. Skipping database schema setup.
+2025-06-20 21:41:43 - ⏱️ STEP 6 Completed in 32 seconds
+2025-06-20 21:41:43 - ==========================================
+2025-06-20 21:41:43 - ==========================================
+2025-06-20 21:50:18 - ⏳ User took 515 seconds to respond to Step 6.5
+2025-06-20 21:50:18 - ⏭️ Step 6.5 skipped by user
+2025-06-20 21:50:18 - ⏭️ Step 6.5 skipped. Continuing to next step...
+2025-06-20 21:50:18 - ==========================================
+2025-06-20 22:00:54 - ⏳ User took 636 seconds to respond to Step 7
+2025-06-20 22:00:54 - ✅ Step 7 approved by user
+2025-06-20 22:00:54 - STEP 7: Restarting deployments in DR GKE clusters
+2025-06-20 22:00:54 - Restarting deployments in cluster: gke-kong-dr-iiflsmasta-los
+2025-06-20 22:00:54 - 🔹 Starting: Connecting to gke-kong-dr-iiflsmasta-los
+2025-06-20 22:00:55 - ✅ SUCCESS: Connecting to gke-kong-dr-iiflsmasta-los (Start: 2025-06-20 22:00:54, End: 2025-06-20 22:00:55)
+2025-06-20 22:00:55 - 🔹 Starting: Restarting deployments in kong-dr
+2025-06-20 22:00:56 - ✅ SUCCESS: Restarting deployments in kong-dr (Start: 2025-06-20 22:00:55, End: 2025-06-20 22:00:56)
+2025-06-20 22:00:56 - Restarting deployments in cluster: gke-temporal-dr-iiflsmasta-los
+2025-06-20 22:00:56 - 🔹 Starting: Connecting to gke-temporal-dr-iiflsmasta-los
+2025-06-20 22:00:56 - ✅ SUCCESS: Connecting to gke-temporal-dr-iiflsmasta-los (Start: 2025-06-20 22:00:56, End: 2025-06-20 22:00:56)
+2025-06-20 22:00:56 - 🔹 Starting: Restarting deployments in temporal-dr
+2025-06-20 22:00:57 - ✅ SUCCESS: Restarting deployments in temporal-dr (Start: 2025-06-20 22:00:56, End: 2025-06-20 22:00:57)
+2025-06-20 22:00:57 - Restarting deployments in cluster: gke-dr-iiflsmasta-los
+2025-06-20 22:00:57 - 🔹 Starting: Connecting to gke-dr-iiflsmasta-los
+2025-06-20 22:00:58 - ✅ SUCCESS: Connecting to gke-dr-iiflsmasta-los (Start: 2025-06-20 22:00:57, End: 2025-06-20 22:00:58)
+2025-06-20 22:00:58 - 🔹 Starting: Restarting deployments in samasta-dr
+2025-06-20 22:00:59 - ✅ SUCCESS: Restarting deployments in samasta-dr (Start: 2025-06-20 22:00:58, End: 2025-06-20 22:00:59)
+2025-06-20 22:00:59 - ⏱️ STEP 7 Completed in 5 seconds
+2025-06-20 22:00:59 - ==========================================
+2025-06-20 22:00:59 - ==========================================
+2025-06-20 22:18:29 - ⏳ User took 1050 seconds to respond to Step 8
+2025-06-20 22:18:29 - ✅ Step 8 approved by user
+2025-06-20 22:18:29 - STEP 8: Update the Load Balancer Configuration
+2025-06-20 22:18:29 - Creating URL_MAP_FILE.yaml for Load Balancer import
+2025-06-20 22:18:29 - ✅ URL_MAP_FILE.yaml created. Contents:
+defaultService: https://www.googleapis.com/compute/v1/projects/prj-iifl-svc-prod-c57d/global/backendServices/lb-dr-external-iiflsamasta-backend-frontend-neg
+hostRules:
+- hosts:
+  - omni360.iiflsamasta.com
+  pathMatcher: path-matcher-1
+kind: compute#urlMap
+name: lb-prod-external-iiflsamasta
+pathMatchers:
+- defaultService: https://www.googleapis.com/compute/v1/projects/prj-iifl-svc-prod-c57d/global/backendServices/lb-dr-external-iiflsamasta-backend-frontend-neg
+  name: path-matcher-1
+  pathRules:
+  - paths:
+    - /api/*
+    service: https://www.googleapis.com/compute/v1/projects/prj-iifl-svc-prod-c57d/global/backendServices/lb-dr-external-iiflsamasta-backend-kong-neg
+  - paths:
+    - /scheduler/*
+    service: https://www.googleapis.com/compute/v1/projects/prj-iifl-svc-prod-c57d/global/backendServices/lb-dr-external-iiflsamasta-scheduler-backend
+selfLink: https://www.googleapis.com/compute/v1/projects/prj-iifl-svc-prod-c57d/global/urlMaps/lb-prod-external-iiflsamasta
+2025-06-20 22:18:29 - 🔹 Starting: Add DR NEG backend to load balancer
+2025-06-20 22:18:50 - ✅ SUCCESS: Add DR NEG backend to load balancer (Start: 2025-06-20 22:18:29, End: 2025-06-20 22:18:50)
+2025-06-20 22:18:50 - ⏱️ STEP 8 Completed in 21 seconds
+2025-06-20 22:18:50 - ==========================================
+2025-06-20 22:18:50 - === Disaster Recovery Execution Completed at: 2025-06-20 22:18:50 ===
+2025-06-20 22:18:50 - 📨 Email content prepared: dr-mail-body-20250620-2138.txt (attach dr-plan-20250620-2138.log manually)
+2025-06-20 22:18:50 - ✅ DR Execution completed.

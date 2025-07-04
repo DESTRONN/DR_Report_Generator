@@ -1,0 +1,424 @@
+{% macro min_sec(seconds) %}
+    {%- set minutes = seconds // 60 -%}
+    {%- set secs = seconds % 60 -%}
+    {%- if minutes > 0 -%}{{ minutes }} min {% endif -%}{%- if secs > 0 or minutes == 0 -%}{{ secs }} sec{% endif -%}
+{% endmacro %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step {{ step_number }} Details - {{ log_name }}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container-fluid {
+            padding-top: 2rem;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.95);
+            margin-bottom: 2rem;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.5rem;
+        }
+        
+        .card-body {
+            padding: 2rem;
+        }
+        
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .breadcrumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .breadcrumb-item + .breadcrumb-item::before {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .breadcrumb-item a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        .breadcrumb-item.active {
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .substep-item {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            background: white;
+            border-left: 4px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .substep-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .substep-item.success {
+            border-left-color: #28a745;
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.05) 0%, rgba(40, 167, 69, 0.1) 100%);
+        }
+        
+        .substep-item.failure {
+            border-left-color: #dc3545;
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.05) 0%, rgba(220, 53, 69, 0.1) 100%);
+        }
+        
+        .substep-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .substep-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .substep-meta {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-failure {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .time-info {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+        
+        .time-info .row {
+            margin: 0;
+        }
+        
+        .time-info .col-md-4 {
+            padding: 0.5rem;
+        }
+        
+        .time-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+        
+        .time-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-btn:hover {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .error-item {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            color: #721c24;
+        }
+        
+        .error-item i {
+            margin-right: 0.5rem;
+        }
+        
+        .step-summary {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .step-summary h6 {
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-summary p {
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .success-stat {
+            color: #28a745;
+        }
+        
+        .failure-stat {
+            color: #dc3545;
+        }
+        
+        .info-stat {
+            color: #17a2b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        {% if not step_details %}
+        <div class="alert alert-warning text-center" role="alert">
+            <strong>Warning:</strong> No substep details found for step <b>{{ step_number }}</b>. Please check your log file or step selection.
+        </div>
+        {% endif %}
+        {# Debug info removed for production #}
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-2">
+                                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                <li class="breadcrumb-item"><a href="/results">Results</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Step {{ step_number }}</li>
+                            </ol>
+                        </nav>
+                        <h1 class="header-title">
+                            <i class="fas fa-cogs me-3"></i>Step {{ step_number }} Details
+                        </h1>
+                        <p class="header-subtitle">{{ log_name }}</p>
+                        
+                        {% if step_name %}
+                        <div class="step-summary">
+                            <h6><i class="fas fa-info-circle me-2"></i>Step Description</h6>
+                            <p>{{ step_name }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Statistics -->
+        {% if step_details %}
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value info-stat">{{ step_details|length }}</div>
+                <div class="stat-label">Total Substeps</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value success-stat">
+                    {% set success_count = step_details.values() | selectattr('status', 'equalto', 'success') | list | length %}
+                    {{ success_count }}
+                </div>
+                <div class="stat-label">Successful</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value failure-stat">
+                    {% set failure_count = step_details.values() | selectattr('status', 'equalto', 'failure') | list | length %}
+                    {{ failure_count }}
+                </div>
+                <div class="stat-label">Failed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value info-stat">
+                    {% set total_time = step_details.values() | sum(attribute='time_taken') %}
+                    {{ min_sec(total_time) }}
+                </div>
+                <div class="stat-label">Total Time</div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Substeps -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5><i class="fas fa-tasks me-2"></i>Substep Details</h5>
+                        <a href="/results" class="back-btn">
+                            <i class="fas fa-arrow-left"></i>
+                            Back to Results
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        {% if step_details %}
+                            {% for substep_name, substep_data in step_details.items() %}
+                                {% if substep_data is mapping and 'status' in substep_data and 'start_time' in substep_data and 'end_time' in substep_data and 'time_taken' in substep_data %}
+                                <div class="substep-item {{ substep_data.status }}">
+                                    <div class="substep-header">
+                                        <div class="flex-grow-1">
+                                            <div class="substep-title">{{ substep_name }}</div>
+                                            <div class="substep-meta">
+                                                <i class="fas fa-clock me-2"></i>Duration: {{ min_sec(substep_data.time_taken) }}
+                                            </div>
+                                        </div>
+                                        <div class="status-badge status-{{ substep_data.status }}">
+                                            {% if substep_data.status == 'success' %}
+                                                <i class="fas fa-check-circle"></i>Success
+                                            {% else %}
+                                                <i class="fas fa-times-circle"></i>Failed
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="time-info">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="time-label">Start Time</div>
+                                                <div class="time-value">{{ substep_data.start_time }}</div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="time-label">End Time</div>
+                                                <div class="time-value">{{ substep_data.end_time }}</div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="time-label">Duration</div>
+                                                <div class="time-value">{{ min_sec(substep_data.time_taken) }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">
+                                <i class="fas fa-info-circle"></i>
+                                <h5>No substep details available</h5>
+                                <p>This step doesn't have detailed substep information in the log file.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Errors Section -->
+        {% if errors %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-exclamation-triangle me-2"></i>Errors and Issues</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for error in errors %}
+                        <div class="error-item">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            {{ error }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
