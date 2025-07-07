@@ -7,8 +7,21 @@ import json
 from werkzeug.utils import secure_filename
 import pprint
 
+
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here'
+
+# Jinja2 filter to format seconds as min:sec
+def minsec(value):
+    try:
+        value = int(value)
+        m = value // 60
+        s = value % 60
+        return f"{m}:{s:02d}"
+    except (ValueError, TypeError):
+        return "N/A"
+
+app.jinja_env.filters['minsec'] = minsec
 
 # Configuration
 UPLOAD_FOLDER = 'uploads'
