@@ -283,22 +283,21 @@
                         </a>
                     </div>
                     <div class="card-body">
-                        {% for step in parsed_data.steps_data.steps %}
-                        <div class="step-item d-flex align-items-center" onclick="viewStepDetail({{ loop.index }})">
-                            <div class="step-number">{{ loop.index }}</div>
+                        {% for step_num, step_desc in parsed_data.steps_data.steps.items() %}
+                        <div class="step-item d-flex align-items-center" onclick="viewStepDetail('{{ step_num }}')">
+                            <div class="step-number">{{ step_num }}</div>
                             <div class="step-content">
-                                <div class="step-title">{{ step }}</div>
+                                <div class="step-title">{{ step_desc }}</div>
                                 <div class="step-meta">
                                     <i class="fas fa-clock me-2"></i>
-                                    {% if loop.index0 < parsed_data.steps_data.time_taken|length %}
-                                        Duration: {{ parsed_data.steps_data.time_taken[loop.index0]|minsec }}
+                                    {% if parsed_data.steps_data.time_taken[step_num] is defined %}
+                                        Duration: {{ parsed_data.steps_data.time_taken[step_num]|minsec }}
                                     {% else %}
                                         Duration: Not available
                                     {% endif %}
-                                    
-                                    {% if loop.index0 < parsed_data.steps_data.approved_by|length %}
+                                    {% if parsed_data.steps_data.approved_by[step_num] is defined %}
                                         <i class="fas fa-user-check ms-3 me-2"></i>
-                                        Approved by: {{ parsed_data.steps_data.approved_by[loop.index0] }}
+                                        Approved by: {{ parsed_data.steps_data.approved_by[step_num] }}
                                     {% endif %}
                                 </div>
                             </div>
@@ -317,7 +316,13 @@
         // Chart data from Flask
         const stepData = {{ parsed_data.steps_data|tojson }};
         const stepDetails = {{ parsed_data.step_details|tojson }};
-        
+
+        // Get ordered step numbers (as strings, sorted numerically)
+        const stepNums = Object.keys(stepData.steps).sort((a, b) => parseFloat(a) - parseFloat(b));
+        const stepDescs = stepNums.map(num => stepData.steps[num]);
+        const timeTakenArr = stepNums.map(num => stepData.time_taken[num] || 0);
+        const approvedByArr = stepNums.map(num => stepData.approved_by[num] || null);
+
         // Helper to format seconds to mm:ss
         function formatMinSec(seconds) {
             if (isNaN(seconds) || seconds === null) return 'N/A';
@@ -327,7 +332,7 @@
         }
 
         // Convert seconds to minutes for chart data
-        const timeTakenMinutes = stepData.time_taken.map(sec => sec / 60);
+        const timeTakenMinutes = timeTakenArr.map(sec => sec / 60);
 
         // Initialize Bar Chart
         const barChart = echarts.init(document.getElementById('barChart'));
@@ -361,7 +366,7 @@
             },
             xAxis: {
                 type: 'category',
-                data: stepData.steps.map((step, index) => `Step ${index + 1}`),
+                data: stepNums.map(num => `Step ${num}`),
                 axisLabel: {
                     rotate: 45
                 }
@@ -386,9 +391,9 @@
 
         // Initialize Pie Chart
         const pieChart = echarts.init(document.getElementById('pieChart'));
-        const pieData = timeTakenMinutes.map((time, index) => ({
-            name: `Step ${index + 1}`,
-            value: time
+        const pieData = stepNums.map((num, idx) => ({
+            name: `Step ${num}`,
+            value: timeTakenMinutes[idx]
         }));
 
         const pieOption = {
@@ -481,7 +486,7 @@
             },
             xAxis: {
                 type: 'category',
-                data: stepData.steps.map((step, index) => `Step ${index + 1}`),
+                data: stepNums.map(num => `Step ${num}`),
                 axisLabel: {
                     rotate: 45
                 }

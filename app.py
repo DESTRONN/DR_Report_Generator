@@ -43,7 +43,7 @@ def calculate_duration_seconds(start_time: str, end_time: str) -> int:
 
 def parse_log_file(filepath):
     """Parse the log file and extract all relevant information"""
-    m_d = {"steps": [], "time_taken": [], "approved_by": []}
+    m_d = {"steps": {}, "time_taken": {}, "approved_by": {}}
     other_errors = {}
     d = defaultdict(dict)
     DR_START_TIME = ""
@@ -95,13 +95,13 @@ def parse_log_file(filepath):
             step_approval_match = step_approval_pattern.search(details)
             if step_approval_match:
                 step_num, approved_by = step_approval_match.groups()
-                m_d["approved_by"].append(approved_by)
+                m_d["approved_by"][step_num] = approved_by
                 continue
 
             main_step_match = main_step_pattern.search(details)
             if main_step_match:
                 step_num, step_desc = main_step_match.groups()
-                m_d["steps"].append(step_desc)
+                m_d["steps"][step_num] = step_desc
                 continue
 
             success_match = success_pattern.search(details)
@@ -139,7 +139,7 @@ def parse_log_file(filepath):
             step_completed_match = step_completed_pattern.search(details)
             if step_completed_match:
                 step_num, seconds = step_completed_match.groups()
-                m_d["time_taken"].append(int(seconds))
+                m_d["time_taken"][step_num] = int(seconds)
                 continue
     
     pprint.pprint(d)
@@ -260,15 +260,7 @@ def step_detail(step_number):
     
     parsed_data = session['parsed_data']
     step_details = parsed_data['step_details'].get(step_number, {})
-    step_name = ""
-    
-    # Get step name from steps list
-    try:
-        step_index = int(float(step_number)) - 1
-        if 0 <= step_index < len(parsed_data['steps_data']['steps']):
-            step_name = parsed_data['steps_data']['steps'][step_index]
-    except (ValueError, IndexError):
-        pass
+    step_name = parsed_data['steps_data']['steps'].get(step_number, "")
     
     errors = parsed_data['other_errors'].get(step_number, [])
     
