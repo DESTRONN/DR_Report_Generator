@@ -332,13 +332,14 @@
         }
 
         // Convert seconds to minutes for chart data
-        const timeTakenMinutes = timeTakenArr.map(sec => sec / 60);
+        // Use raw seconds for chart data, but display as min:sec in tooltips/labels
+        const timeTakenSeconds = timeTakenArr;
 
         // Initialize Bar Chart
         const barChart = echarts.init(document.getElementById('barChart'));
         const barOption = {
             title: {
-                text: 'Step Duration (minutes)',
+                text: 'Step Duration (min:sec)',
                 left: 'center',
                 textStyle: {
                     color: '#333',
@@ -353,7 +354,7 @@
                 formatter: function(params) {
                     let tooltip = '';
                     params.forEach(function(item) {
-                        tooltip += `${item.marker} ${item.seriesName}: ${item.value.toFixed(2)} min<br/>`;
+                        tooltip += `${item.marker} ${item.seriesName}: ${formatMinSec(item.value)}<br/>`;
                     });
                     return tooltip;
                 }
@@ -373,12 +374,17 @@
             },
             yAxis: {
                 type: 'value',
-                name: 'Time (minutes)'
+                name: 'Time (seconds)',
+                axisLabel: {
+                    formatter: function(value) {
+                        return formatMinSec(value);
+                    }
+                }
             },
             series: [{
                 name: 'Duration',
                 type: 'bar',
-                data: timeTakenMinutes,
+                data: timeTakenSeconds,
                 itemStyle: {
                     color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                         {offset: 0, color: '#667eea'},
@@ -393,7 +399,7 @@
         const pieChart = echarts.init(document.getElementById('pieChart'));
         const pieData = stepNums.map((num, idx) => ({
             name: `Step ${num}`,
-            value: timeTakenMinutes[idx]
+            value: timeTakenSeconds[idx]
         }));
 
         const pieOption = {
@@ -408,7 +414,7 @@
             tooltip: {
                 trigger: 'item',
                 formatter: function(params) {
-                    return `${params.seriesName} <br/>${params.name}: ${params.value.toFixed(2)} min (${params.percent}%)`;
+                    return `${params.seriesName} <br/>${params.name}: ${formatMinSec(params.value)} (${params.percent}%)`;
                 }
             },
             legend: {
@@ -431,7 +437,7 @@
                         fontSize: '18',
                         fontWeight: 'bold',
                         formatter: function(params) {
-                            return `${params.value.toFixed(2)} min`;
+                            return formatMinSec(params.value);
                         }
                     }
                 },
@@ -451,8 +457,8 @@
 
         // Initialize Line Charts
         const lineChart = echarts.init(document.getElementById('lineChart'));
-        const cumulativeMinutes = timeTakenMinutes.reduce((acc, min, index) => {
-            acc.push(index === 0 ? min : acc[index - 1] + min);
+        const cumulativeSeconds = timeTakenSeconds.reduce((acc, sec, index) => {
+            acc.push(index === 0 ? sec : acc[index - 1] + sec);
             return acc;
         }, []);
         const lineOption = {
@@ -469,7 +475,7 @@
                 formatter: function(params) {
                     let tooltip = '';
                     params.forEach(function(item) {
-                        tooltip += `${item.marker} ${item.seriesName}: ${item.value.toFixed(2)} min<br/>`;
+                        tooltip += `${item.marker} ${item.seriesName}: ${formatMinSec(item.value)}<br/>`;
                     });
                     return tooltip;
                 }
@@ -493,13 +499,18 @@
             },
             yAxis: {
                 type: 'value',
-                name: 'Time (minutes)'
+                name: 'Time (seconds)',
+                axisLabel: {
+                    formatter: function(value) {
+                        return formatMinSec(value);
+                    }
+                }
             },
             series: [
                 {
                     name: 'Duration',
                     type: 'line',
-                    data: timeTakenMinutes,
+                    data: timeTakenSeconds,
                     lineStyle: {
                         color: '#667eea'
                     },
@@ -510,7 +521,7 @@
                 {
                     name: 'Cumulative Time',
                     type: 'line',
-                    data: cumulativeMinutes,
+                    data: cumulativeSeconds,
                     lineStyle: {
                         color: '#764ba2'
                     },
